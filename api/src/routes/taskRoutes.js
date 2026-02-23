@@ -2,7 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const taskController = require('../controllers/taskController');
+const cacheMiddleware = require('../middlewares/cacheMiddleware');
 
+router.get('/:id', cacheMiddleware((req) => `tasks:${req.params.id}`),taskController.getTaskById);
 router.get('/tasks', (req, res, next) => taskController.getAllTasks(req, res, next));
 router.get('/tasks/stats', (req, res, next) => taskController.getStatistics(req, res, next));
 router.get('/tasks/:id', (req, res, next) => taskController.getTaskById(req, res, next));

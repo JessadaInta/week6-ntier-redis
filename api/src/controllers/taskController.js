@@ -1,5 +1,22 @@
 // src/controllers/taskController.js
 const taskService = require('../services/taskService');
+const { setCache } = require('../config/redis');
+
+exports.getTaskById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const task = await taskService.getTaskById(id);
+
+        // Save to cache (TTL 60)
+        await setCache(`tasks:${id}`, task, 60);
+
+        res.json(task);
+
+    } catch (err) {
+        next(err);
+    }
+};
 
 class TaskController {
     async getAllTasks(req, res, next) {
